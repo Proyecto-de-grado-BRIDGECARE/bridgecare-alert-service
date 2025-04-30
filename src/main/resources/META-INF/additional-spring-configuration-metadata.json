@@ -1,0 +1,20 @@
+{
+    "properties": [
+      {
+        "name": "bridge.service.url",
+        "type": "java.lang.String",
+        "description": "A description for 'bridge.service.url'"
+      },
+      {
+        "name": "auth.service.url",
+        "type": "java.lang.String",
+        "description": "A description for 'auth.service.url'"
+      },
+      {
+        "name": "inventory.service.url",
+        "type": "java.lang.String",
+        "description": "A description for 'auth.service.url'"
+      }
+    ]
+  }
+  
