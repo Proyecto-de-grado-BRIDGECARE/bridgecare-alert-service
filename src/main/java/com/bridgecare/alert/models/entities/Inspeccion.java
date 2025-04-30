@@ -1,4 +1,4 @@
-package com.bridgecare.inspection.models.entities;
+package com.bridgecare.alert.models.entities;
 
 import com.bridgecare.common.models.entities.Puente;
 import com.bridgecare.common.models.entities.Usuario;

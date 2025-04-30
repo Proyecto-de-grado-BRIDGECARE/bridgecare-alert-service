@@ -1,4 +1,4 @@
-package com.bridgecare.inspection.security.services;
+package com.bridgecare.alert.security.services;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;

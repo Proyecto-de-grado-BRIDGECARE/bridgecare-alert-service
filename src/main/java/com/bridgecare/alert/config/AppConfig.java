@@ -1,4 +1,4 @@
-package com.bridgecare.inspection.config;
+package com.bridgecare.alert.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

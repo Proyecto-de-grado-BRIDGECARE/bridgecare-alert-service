@@ -1,13 +1,13 @@
-package com.bridgecare.inspection.services;
+package com.bridgecare.alert.services;
 
-import com.bridgecare.inspection.models.dtos.InspeccionDTO;
-import com.bridgecare.inspection.models.entities.Componente;
-import com.bridgecare.inspection.models.entities.Inspeccion;
+import com.bridgecare.alert.models.dtos.InspeccionDTO;
+import com.bridgecare.alert.models.entities.Componente;
+import com.bridgecare.alert.models.entities.Inspeccion;
 import com.bridgecare.common.models.dtos.UsuarioDTO;
 import com.bridgecare.common.models.entities.Puente;
 import com.bridgecare.common.models.entities.Usuario;
-import com.bridgecare.inspection.models.entities.Reparacion;
-import com.bridgecare.inspection.repositories.InspeccionRepository;
+import com.bridgecare.alert.models.entities.Reparacion;
+import com.bridgecare.alert.repositories.InspeccionRepository;
 
 import jakarta.transaction.Transactional;
 

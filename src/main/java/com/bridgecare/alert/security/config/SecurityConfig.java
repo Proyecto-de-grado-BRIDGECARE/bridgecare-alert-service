@@ -1,4 +1,4 @@
-package com.bridgecare.inspection.security.config;
+package com.bridgecare.alert.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,8 +7,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.bridgecare.inspection.security.services.JwtAuthenticationFilter;
-import com.bridgecare.inspection.security.services.JwtTokenProvider;
+import com.bridgecare.alert.security.services.JwtAuthenticationFilter;
+import com.bridgecare.alert.security.services.JwtTokenProvider;
 
 @Configuration
 @EnableWebSecurity

@@ -1,4 +1,4 @@
-package com.bridgecare.inspection.models.entities;
+package com.bridgecare.alert.models.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

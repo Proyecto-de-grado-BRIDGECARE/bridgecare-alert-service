@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.bridgecare</groupId>
-	<artifactId>inspection</artifactId>
+	<artifactId>alert</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>inspection</name>
-	<description>BridgeCare Inspection Service</description>
+	<name>alerts</name>
+	<description>BridgeCare Alert Service</description>
 	<url/>
 	<licenses>
 		<license/>

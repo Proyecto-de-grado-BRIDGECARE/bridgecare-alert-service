@@ -1,4 +1,4 @@
-package com.bridgecare.inspection.models.dtos;
+package com.bridgecare.alert.models.dtos;
 
 import com.bridgecare.common.models.dtos.PuenteDTO;
 import com.bridgecare.common.models.dtos.UsuarioDTO;

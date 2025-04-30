@@ -1,4 +1,4 @@
-package com.bridgecare.inspection;
+package com.bridgecare.alert;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,9 +9,9 @@ import io.github.cdimascio.dotenv.Dotenv;
 @SpringBootApplication
 @EntityScan({
     "com.bridgecare.common.models.entities",
-    "com.bridgecare.inspection.models.entities"
+    "com.bridgecare.alert.models.entities"
 })
-public class InspectionServiceApplication {
+public class AlertServiceApplication {
 
     static {
         Dotenv dotenv = Dotenv.load();
@@ -22,6 +22,6 @@ public class InspectionServiceApplication {
     }
 
 	public static void main(String[] args) {
-		SpringApplication.run(InspectionServiceApplication.class, args);
+		SpringApplication.run(AlertServiceApplication.class, args);
 	}
 }

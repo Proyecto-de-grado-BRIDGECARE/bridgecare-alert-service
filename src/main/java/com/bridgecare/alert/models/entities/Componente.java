@@ -1,4 +1,4 @@
-package com.bridgecare.inspection.models.entities;
+package com.bridgecare.alert.models.entities;
 
 import java.util.ArrayList;
 import java.util.List;

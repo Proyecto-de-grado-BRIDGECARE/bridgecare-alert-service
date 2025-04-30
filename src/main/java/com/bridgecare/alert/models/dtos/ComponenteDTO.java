@@ -1,4 +1,4 @@
-package com.bridgecare.inspection.models.dtos;
+package com.bridgecare.alert.models.dtos;
 
 import java.util.List;
 

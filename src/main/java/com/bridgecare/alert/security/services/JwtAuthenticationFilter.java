@@ -1,4 +1,4 @@
-package com.bridgecare.inspection.security.services;
+package com.bridgecare.alert.security.services;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
