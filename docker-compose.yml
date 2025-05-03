@@ -1,5 +1,5 @@
 services:
-  inspection-service:
+  alert-service:
     build:
       context: .
       args:
