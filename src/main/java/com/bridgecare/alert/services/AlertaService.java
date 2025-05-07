@@ -1,10 +1,23 @@
 package com.bridgecare.alert.services;
 
+import com.bridgecare.alert.config.RabbitMQConfig;
+import com.bridgecare.alert.models.dtos.InspeccionEventDTO;
+import com.bridgecare.alert.models.entities.Alerta;
 import com.bridgecare.alert.repositories.AlertaRepository;
 import com.bridgecare.common.models.dtos.UsuarioDTO;
 import com.bridgecare.common.models.entities.Usuario;
 
+import jakarta.transaction.Transactional;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -18,36 +31,69 @@ public class AlertaService {
     @Autowired
     private RestTemplate restTemplate;
 
-    /*
-    @Transactional
-    public Long saveAlerta(InspeccionDTO request, Authentication authentication) {
+    @RabbitListener(queues = RabbitMQConfig.QUEUE)
+    public void procesarEvento(InspeccionEventDTO evento) {
+        System.out.println("Evento recibido: inspeccionId=" + evento.getInspeccionId());
+        generarAlertasDesdeEvento(evento);
+    }
+
+
+    public void generarAlertasDesdeEvento(InspeccionEventDTO evento) {
+        for (InspeccionEventDTO.ComponenteDTO comp : evento.getComponentes()) {
+            if (comp.getCalificacion() < 3.0) {
+                Alerta alerta = new Alerta();
+                alerta.setInspeccionId(evento.getInspeccionId());
+                alerta.setMensaje("Componente " + comp.getNombre() + " tiene calificación baja: " + comp.getCalificacion());
+                alerta.setEstado("activa");
+                alerta.setFecha(LocalDate.now());
+                alertaRepository.save(alerta);
+                System.out.println("Alerta generada para componente: " + comp.getNombre());
+            }
+        }
+    }
+
+
+
+    public List<Alerta> obtenerAlertasPorPuente(Long puenteId, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new IllegalStateException("Unauthorized: No valid token provided");
         }
 
-        // Extract user ID from JWT
-        String userEmail = extractUserEmailFromAuthentication(authentication);
-        System.out.println("userEmail: " + userEmail);
-
-        String puenteUrl = "http://localhost:8081/api/puentes/" + request.getPuente().getId();
+        String token = getTokenFromAuthentication(authentication);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + getTokenFromAuthentication(authentication));
+        headers.set("Authorization", "Bearer " + token);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<Puente> response = restTemplate.exchange(puenteUrl, HttpMethod.GET, entity, Puente.class);
+        String url = "http://localhost:8083/api/inspecciones/puente/" + puenteId;
+
+        ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
 
         if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
-            throw new IllegalStateException("Failed to find Puente with ID: " + request.getPuente().getId());
+            throw new IllegalStateException("No se pudo obtener las inspecciones para el puente ID: " + puenteId);
         }
 
-        Puente puente = response.getBody();
+        List<Integer> idsInspeccionesInteger = response.getBody();
+        List<Long> idsInspecciones = idsInspeccionesInteger.stream()
+                .map(Integer::longValue)
+                .collect(Collectors.toList());
 
-        return inspeccionRepository.save(inspeccion).getId();
+        return alertaRepository.findByInspeccionIdIn(idsInspecciones);
     }
-     */
+
+    private String determinarTipo(Double calificacion) {
+        if (calificacion < 1.5) {
+            return "CRITICA";
+        } else if (calificacion < 3.0) {
+            return "PRECAUCION";
+        } else {
+            return "NORMAL";
+        }
+    }
+
+
 
     private Usuario mapUsuarioDTOToUsuario(UsuarioDTO usuarioDTO) {
         Usuario usuario = new Usuario();
