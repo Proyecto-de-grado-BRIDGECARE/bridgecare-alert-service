@@ -6,6 +6,8 @@ import com.bridgecare.alert.models.entities.Alerta;
 import com.bridgecare.alert.repositories.AlertaRepository;
 import com.bridgecare.common.models.dtos.UsuarioDTO;
 import com.bridgecare.common.models.entities.Usuario;
+import org.springframework.core.ParameterizedTypeReference;
+
 
 import jakarta.transaction.Transactional;
 
@@ -54,34 +56,34 @@ public class AlertaService {
 
 
 
-    public List<Alerta> obtenerAlertasPorPuente(Long puenteId, Authentication authentication) {
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new IllegalStateException("Unauthorized: No valid token provided");
-        }
-
-        String token = getTokenFromAuthentication(authentication);
+    private List<Long> obtenerInspeccionesPorPuente(Long puenteId, Authentication auth) {
+        String token = getTokenFromAuthentication(auth);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + token);
+        headers.setBearerAuth(token);
         headers.setContentType(MediaType.APPLICATION_JSON);
-
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        String url = "http://localhost:8083/api/inspecciones/puente/" + puenteId;
-
-        ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
+        String url = "http://localhost:8083/api/inspeccion/puente/" + puenteId;
+        ResponseEntity<List<Map<String, Object>>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<List<Map<String, Object>>>() {}
+        );
 
         if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
             throw new IllegalStateException("No se pudo obtener las inspecciones para el puente ID: " + puenteId);
         }
 
-        List<Integer> idsInspeccionesInteger = response.getBody();
-        List<Long> idsInspecciones = idsInspeccionesInteger.stream()
-                .map(Integer::longValue)
+        List<Long> idsInspecciones = response.getBody().stream()
+                .map(map -> ((Number) map.get("id")).longValue())
                 .collect(Collectors.toList());
 
-        return alertaRepository.findByInspeccionIdIn(idsInspecciones);
+        return idsInspecciones;
+
     }
+
 
     private String determinarTipo(Double calificacion) {
         if (calificacion < 1.5) {
@@ -91,6 +93,16 @@ public class AlertaService {
         } else {
             return "NORMAL";
         }
+    }
+
+    public List<Alerta> getAlertasPorInspeccion(Long inspeccionId) {
+        return alertaRepository.findByInspeccionId(inspeccionId);
+    }
+
+
+    public List<Alerta> getAlertasPorPuente(Long puenteId, Authentication auth) {
+        List<Long> inspeccionIds = obtenerInspeccionesPorPuente(puenteId, auth);
+        return alertaRepository.findByInspeccionIdIn(inspeccionIds);
     }
 
 
