@@ -42,8 +42,9 @@ public class AlertaService {
 
     public void generarAlertasDesdeEvento(InspeccionEventDTO evento) {
         for (InspeccionEventDTO.ComponenteDTO comp : evento.getComponentes()) {
-            if (comp.getCalificacion() < 3.0) {
+            if (comp.getCalificacion() <= 3.0) {
                 Alerta alerta = new Alerta();
+                alerta.setTipo(determinarTipo(comp.getCalificacion()));
                 alerta.setInspeccionId(evento.getInspeccionId());
                 alerta.setMensaje("Componente " + comp.getNombre() + " tiene calificación baja: " + comp.getCalificacion());
                 alerta.setEstado("activa");
@@ -86,14 +87,15 @@ public class AlertaService {
 
 
     private String determinarTipo(Double calificacion) {
-        if (calificacion < 1.5) {
+        if (calificacion <= 2) {
             return "CRITICA";
-        } else if (calificacion < 3.0) {
+        } else if (2 < calificacion && calificacion <= 3.0) {
             return "PRECAUCION";
         } else {
             return "NORMAL";
         }
     }
+
 
     public List<Alerta> getAlertasPorInspeccion(Long inspeccionId) {
         return alertaRepository.findByInspeccionId(inspeccionId);
