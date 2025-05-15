@@ -1,6 +1,7 @@
 package com.bridgecare.alert.services;
 
 import com.bridgecare.alert.config.RabbitMQConfig;
+import com.bridgecare.alert.models.dtos.DecisionTreeResponse;
 import com.bridgecare.alert.models.dtos.InspeccionEventDTO;
 import com.bridgecare.alert.models.entities.Alerta;
 import com.bridgecare.alert.repositories.AlertaRepository;
@@ -33,6 +34,10 @@ public class AlertaService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private DecisionTreeService decisionTreeService;
+
+
     @RabbitListener(queues = RabbitMQConfig.QUEUE)
     public void procesarEvento(InspeccionEventDTO evento) {
         System.out.println("Evento recibido: inspeccionId=" + evento.getInspeccionId());
@@ -42,11 +47,17 @@ public class AlertaService {
 
     public void generarAlertasDesdeEvento(InspeccionEventDTO evento) {
         for (InspeccionEventDTO.ComponenteDTO comp : evento.getComponentes()) {
-            if (comp.getCalificacion() <= 3.0) {
+            if (comp.getCalificacion() >= 3.0) {
+                DecisionTreeResponse respuesta = decisionTreeService.generarRecomendacion(
+                        comp.getCalificacion(),
+                        comp.getNombre(),
+                        comp.getTipoDanio()
+                );
                 Alerta alerta = new Alerta();
-                alerta.setTipo(determinarTipo(comp.getCalificacion()));
+                alerta.setTipo(respuesta.getNivel());
                 alerta.setInspeccionId(evento.getInspeccionId());
-                alerta.setMensaje("Componente " + comp.getNombre() + " tiene calificación baja: " + comp.getCalificacion());
+                alerta.setMensaje("Componente " + comp.getNombre() + " : " + respuesta.getMensaje());
+                //alerta.setMensaje("Componente " + comp.getNombre() + " tiene calificación baja: " + comp.getCalificacion());
                 alerta.setEstado("activa");
                 alerta.setFecha(LocalDate.now());
                 alertaRepository.save(alerta);
@@ -86,10 +97,10 @@ public class AlertaService {
     }
 
 
-    private String determinarTipo(Double calificacion) {
+    private String determinarTipo(Integer calificacion) {
         if (calificacion <= 2) {
             return "CRITICA";
-        } else if (2 < calificacion && calificacion <= 3.0) {
+        } else if (2 < calificacion && calificacion <= 3) {
             return "PRECAUCION";
         } else {
             return "NORMAL";
