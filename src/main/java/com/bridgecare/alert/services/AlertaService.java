@@ -46,25 +46,53 @@ public class AlertaService {
 
 
     public void generarAlertasDesdeEvento(InspeccionEventDTO evento) {
+        if (evento == null) {
+            System.out.println("⚠️ Evento nulo recibido. Se ignora.");
+            return;
+        }
+
+        if (evento.getInspeccionId() == null) {
+            System.out.println("⚠️ Inspección sin ID. Se ignora.");
+            return;
+        }
+
+        if (evento.getComponentes() == null || evento.getComponentes().isEmpty()) {
+            System.out.println("⚠️ Inspección sin componentes. No se generan alertas.");
+            return;
+        }
+
         for (InspeccionEventDTO.ComponenteDTO comp : evento.getComponentes()) {
+            if (comp == null) {
+                System.out.println("⚠️ Componente nulo encontrado. Se omite.");
+                continue;
+            }
+
+            // Validación de campos clave
+            if (comp.getNombre() == null || comp.getTipoDanio() == null || comp.getCalificacion() == null) {
+                System.out.println("⚠️ Componente con datos incompletos: " + comp);
+                continue;
+            }
+
             if (comp.getCalificacion() >= 3.0) {
                 DecisionTreeResponse respuesta = decisionTreeService.generarRecomendacion(
                         comp.getCalificacion(),
                         comp.getNombre(),
                         comp.getTipoDanio()
                 );
+
                 Alerta alerta = new Alerta();
                 alerta.setTipo(respuesta.getNivel());
                 alerta.setInspeccionId(evento.getInspeccionId());
                 alerta.setMensaje("Componente " + comp.getNombre() + " : " + respuesta.getMensaje());
-                //alerta.setMensaje("Componente " + comp.getNombre() + " tiene calificación baja: " + comp.getCalificacion());
                 alerta.setEstado("activa");
                 alerta.setFecha(LocalDate.now());
+
                 alertaRepository.save(alerta);
                 System.out.println("Alerta generada para componente: " + comp.getNombre());
             }
         }
     }
+
 
 
 
