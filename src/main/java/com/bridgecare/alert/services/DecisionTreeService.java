@@ -39,7 +39,7 @@ public class DecisionTreeService {
             return new DecisionTreeResponse("Datos incompletos. No se puede generar recomendación.", "NORMAL");
         }
 
-        tipoComponente = tipoComponente.toLowerCase();
+        tipoComponente = normalizarNombreComponente(tipoComponente);
         String severidadDano = clasificarSeveridad(tipoDano);
         boolean esCritico = estructuralesCriticos.contains(tipoComponente);
         boolean esSecundario = estructuralesSecundarios.contains(tipoComponente);
@@ -101,5 +101,29 @@ public class DecisionTreeService {
 
         return new DecisionTreeResponse("Estado desconocido. Verifique los datos ingresados.", "NORMAL");
     }
+
+    private String normalizarNombreComponente(String nombreBD) {
+        return switch (nombreBD.toUpperCase()) {
+            case "SUPERFICIE DEL PUENTE" -> "superficie_puente";
+            case "JUNTAS DE EXPANSIÓN" -> "juntas_expansion";
+            case "ANDENES BORDILLOS" -> "anden_bordillos";
+            case "BARANDAS" -> "barandas";
+            case "CONOS TALUDES" -> "conos_taludes";
+            case "ALETAS" -> "aletas";
+            case "ESTRIBOS" -> "estribos";
+            case "PILAS" -> "pilas";
+            case "APOYOS" -> "apoyos";
+            case "LOSA" -> "losa";
+            case "VIGAS LARGUEROS DIAFRAGMAS" -> "vigas_largueros_diafragmas";
+            case "ELEMENTOS DE ARCO" -> "elementos_arco";
+            case "CABLES PENDOLONES TORRES MACIZOS" -> "cables_pendolones_torres_macizos";
+            case "ELEMENTOS DE ARMADURA" -> "elementos_armadura";
+            case "CAUCE" -> "cauce";
+            case "OTROS ELEMENTOS" -> "otros_elementos";
+            case "PUENTE EN GENERAL" -> "puente_general";
+            default -> "desconocido";
+        };
+    }
+
 
 }
