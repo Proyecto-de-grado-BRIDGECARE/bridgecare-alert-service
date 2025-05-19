@@ -104,7 +104,7 @@ public class AlertaService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        String url = "http://localhost:8083/api/inspeccion/puente/" + puenteId;
+        String url = "http://inspection-service:8083/api/inspeccion/puente/" + puenteId;
         ResponseEntity<List<Map<String, Object>>> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,

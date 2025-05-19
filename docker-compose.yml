@@ -11,6 +11,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
+    networks:
+      - bridgecare-network
 
   alert-service:
     build:
@@ -30,3 +32,9 @@ services:
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: user
       SPRING_RABBITMQ_PASSWORD: password
+    networks:
+      - bridgecare-network
+
+networks:
+  bridgecare-network:
+    external: true
