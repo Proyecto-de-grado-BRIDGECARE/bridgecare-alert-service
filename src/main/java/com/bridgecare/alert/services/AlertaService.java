@@ -69,7 +69,7 @@ public class AlertaService {
 
             // Validación de campos clave
             if (comp.getNombre() == null || comp.getTipoDanio() == null || comp.getCalificacion() == null) {
-                System.out.println("⚠️ Componente con datos incompletos: " + comp);
+                System.out.println("Componente con datos incompletos: " + comp);
                 continue;
             }
 
@@ -124,16 +124,6 @@ public class AlertaService {
 
     }
 
-
-    private String determinarTipo(Integer calificacion) {
-        if (calificacion <= 2) {
-            return "CRITICA";
-        } else if (2 < calificacion && calificacion <= 3) {
-            return "PRECAUCION";
-        } else {
-            return "NORMAL";
-        }
-    }
 
 
     public List<Alerta> getAlertasPorInspeccion(Long inspeccionId) {

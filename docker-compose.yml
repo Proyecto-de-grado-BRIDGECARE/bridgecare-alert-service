@@ -1,11 +1,32 @@
+version: '3.9'
+
 services:
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+
   alert-service:
     build:
       context: .
       args:
-        - GITHUB_USERNAME=${GITHUB_USERNAME}
-        - GITHUB_TOKEN=${GITHUB_TOKEN}
+        GITHUB_USERNAME: ${GITHUB_USERNAME}
+        GITHUB_TOKEN: ${GITHUB_TOKEN}
+    container_name: alert-service
     ports:
       - "8086:8086"
+    depends_on:
+      - rabbitmq
     env_file:
       - .env
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: user
+      SPRING_RABBITMQ_PASSWORD: password
