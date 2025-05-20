@@ -1,7 +1,6 @@
 version: '3.9'
 
 services:
-
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -15,6 +14,8 @@ services:
       - bridgecare-network
 
   alert-service:
+    container_name: alert-service
+    image: alert-service
     build:
       context: .
       args:
