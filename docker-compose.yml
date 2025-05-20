@@ -21,7 +21,6 @@ services:
       args:
         GITHUB_USERNAME: ${GITHUB_USERNAME}
         GITHUB_TOKEN: ${GITHUB_TOKEN}
-    container_name: alert-service
     ports:
       - "8086:8086"
     depends_on:
