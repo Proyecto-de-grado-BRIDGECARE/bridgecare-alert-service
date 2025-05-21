@@ -37,6 +37,10 @@ public class AlertaService {
     @Autowired
     private DecisionTreeService decisionTreeService;
 
+    @Autowired
+    private MailService mailService;
+
+
 
     @RabbitListener(queues = RabbitMQConfig.QUEUE)
     public void procesarEvento(InspeccionEventDTO evento) {
@@ -67,11 +71,14 @@ public class AlertaService {
                 continue;
             }
 
+
             // Validación de campos clave
             if (comp.getNombre() == null || comp.getTipoDanio() == null || comp.getCalificacion() == null) {
                 System.out.println("Componente con datos incompletos: " + comp);
                 continue;
             }
+
+            String destinatario= evento.getEmail();
 
             if (comp.getCalificacion() >= 3.0) {
                 DecisionTreeResponse respuesta = decisionTreeService.generarRecomendacion(
@@ -89,6 +96,17 @@ public class AlertaService {
 
                 alertaRepository.save(alerta);
                 System.out.println("Alerta generada para componente: " + comp.getNombre());
+
+                if (respuesta.getNivel().equalsIgnoreCase("CRITICA") || respuesta.getNivel().equalsIgnoreCase("PRECAUCION")) {
+                    mailService.enviarCorreo(
+                            destinatario,
+                            "🔔 Nueva alerta generada - Componente: " + comp.getNombre(),
+                            "Se ha generado una alerta del tipo: " + respuesta.getNivel() +
+                                    "\n\nComponente: " + comp.getNombre() +
+                                    "\nMensaje: " + respuesta.getMensaje() +
+                                    "\nInspección ID: " + evento.getInspeccionId()
+                    );
+                }
             }
         }
     }

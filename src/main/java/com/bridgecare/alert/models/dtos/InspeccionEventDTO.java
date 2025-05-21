@@ -4,6 +4,8 @@ import java.util.List;
 
 public class InspeccionEventDTO {
     private Long inspeccionId;
+
+    private String email;
     private List<ComponenteDTO> componentes;
 
     public Long getInspeccionId() {
@@ -20,6 +22,14 @@ public class InspeccionEventDTO {
 
     public void setComponentes(List<ComponenteDTO> componentes) {
         this.componentes = componentes;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public static class ComponenteDTO {
