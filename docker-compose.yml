@@ -15,6 +15,7 @@ services:
   alert-service:
     container_name: alert-service
     image: alert-service
+    restart: unless-stopped
     build:
       context: .
       args:
